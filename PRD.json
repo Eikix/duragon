@@ -475,7 +475,7 @@
         "Show validation error for invalid expressions",
         "Clear input after successful roll (optional)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "dice-008",
