@@ -797,7 +797,7 @@
         "Support hover state for clickable cards",
         "Apply consistent padding and rounded corners"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-004",
