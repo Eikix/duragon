@@ -811,7 +811,7 @@
         "Support title and content slots",
         "Trap focus within modal when open"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-005",
