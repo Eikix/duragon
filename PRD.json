@@ -1,0 +1,1025 @@
+{
+  "project": "duragon",
+  "description": "Lightweight D&D web platform for remote play with friends",
+  "stack": {
+    "frontend": "React + TypeScript + Vite + Tailwind CSS",
+    "backend": "Supabase (Auth, Database, Realtime)",
+    "database": "PostgreSQL via Supabase",
+    "realtime": "Supabase Realtime"
+  },
+  "tasks": [
+    {
+      "id": "setup-001",
+      "category": "setup",
+      "description": "Initialize npm monorepo with workspace configuration",
+      "steps": [
+        "Create root package.json with workspaces config",
+        "Run npm install successfully",
+        "Verify workspace structure with npm ls --workspaces"
+      ],
+      "passes": true
+    },
+    {
+      "id": "setup-002",
+      "category": "setup",
+      "description": "Configure Vite React application with TypeScript",
+      "steps": [
+        "Create apps/web directory with Vite React-TS template",
+        "Configure vite.config.ts with proper settings",
+        "Create tsconfig.json extending base config",
+        "Run npm run dev and verify app loads at localhost"
+      ],
+      "passes": false
+    },
+    {
+      "id": "setup-003",
+      "category": "setup",
+      "description": "Set up Tailwind CSS with proper configuration",
+      "steps": [
+        "Install tailwindcss, postcss, autoprefixer",
+        "Create tailwind.config.js with content paths",
+        "Create postcss.config.js",
+        "Add Tailwind directives to index.css",
+        "Verify Tailwind classes render correctly in browser"
+      ],
+      "passes": false
+    },
+    {
+      "id": "setup-004",
+      "category": "setup",
+      "description": "Initialize Supabase client configuration",
+      "steps": [
+        "Install @supabase/supabase-js",
+        "Create .env.example with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY",
+        "Create src/lib/supabase.ts with typed client",
+        "Verify client initializes without errors"
+      ],
+      "passes": false
+    },
+    {
+      "id": "setup-005",
+      "category": "setup",
+      "description": "Create shared package for cross-package code",
+      "steps": [
+        "Create packages/shared directory structure",
+        "Configure package.json with proper exports",
+        "Configure tsconfig.json for the package",
+        "Verify package can be imported from apps/web"
+      ],
+      "passes": false
+    },
+    {
+      "id": "setup-006",
+      "category": "setup",
+      "description": "Set up Supabase local development environment",
+      "steps": [
+        "Create supabase directory with config.toml",
+        "Initialize Supabase project (supabase init)",
+        "Verify supabase start runs successfully",
+        "Confirm local Supabase Studio accessible"
+      ],
+      "passes": false
+    },
+    {
+      "id": "db-001",
+      "category": "database",
+      "description": "Create profiles table with RLS policies",
+      "steps": [
+        "Create migration file for profiles table",
+        "Add id, display_name, avatar_url, timestamps columns",
+        "Enable RLS on profiles table",
+        "Create policy: users can read all profiles",
+        "Create policy: users can only update own profile",
+        "Run migration and verify table exists"
+      ],
+      "passes": false
+    },
+    {
+      "id": "db-002",
+      "category": "database",
+      "description": "Create rooms table with invite code generation",
+      "steps": [
+        "Add rooms table with id, name, owner_id, invite_code, settings",
+        "Add unique constraint on invite_code",
+        "Add default value for invite_code using gen_random_bytes",
+        "Enable RLS with owner-based policies",
+        "Verify invite codes are auto-generated on insert"
+      ],
+      "passes": false
+    },
+    {
+      "id": "db-003",
+      "category": "database",
+      "description": "Create room_members table with role management",
+      "steps": [
+        "Add room_members table with room_id, user_id, role",
+        "Add CHECK constraint for role values (owner, dm, player)",
+        "Add unique constraint on (room_id, user_id)",
+        "Enable RLS: members can view other members in same room",
+        "Create policy for joining rooms"
+      ],
+      "passes": false
+    },
+    {
+      "id": "db-004",
+      "category": "database",
+      "description": "Create characters table with flexible JSONB schema",
+      "steps": [
+        "Add characters table with all columns including core_stats and sheet_data JSONB",
+        "Add GIN indexes on JSONB columns for query performance",
+        "Enable RLS: users can CRUD own characters",
+        "Create policy: room members can view public characters",
+        "Verify JSONB data can be inserted and queried"
+      ],
+      "passes": false
+    },
+    {
+      "id": "db-005",
+      "category": "database",
+      "description": "Create dice_rolls table with transparent results",
+      "steps": [
+        "Add dice_rolls table with expression, individual_rolls[], modifier, total",
+        "Add roll_metadata JSONB for advantage/disadvantage tracking",
+        "Add index on (room_id, created_at DESC) for history queries",
+        "Enable RLS: room members can view and create rolls",
+        "Verify individual_rolls array stores correctly"
+      ],
+      "passes": false
+    },
+    {
+      "id": "db-006",
+      "category": "database",
+      "description": "Enable Supabase Realtime on required tables",
+      "steps": [
+        "Add dice_rolls to supabase_realtime publication",
+        "Add characters to supabase_realtime publication",
+        "Add room_members to supabase_realtime publication",
+        "Verify realtime events fire on INSERT/UPDATE"
+      ],
+      "passes": false
+    },
+    {
+      "id": "db-007",
+      "category": "database",
+      "description": "Create updated_at triggers for all tables",
+      "steps": [
+        "Create update_updated_at() function",
+        "Add trigger to profiles table",
+        "Add trigger to rooms table",
+        "Add trigger to characters table",
+        "Verify updated_at changes on row update"
+      ],
+      "passes": false
+    },
+    {
+      "id": "db-008",
+      "category": "database",
+      "description": "Generate TypeScript types from database schema",
+      "steps": [
+        "Run supabase gen types typescript",
+        "Save output to src/types/database.ts",
+        "Verify types include all tables and columns",
+        "Update Supabase client to use generated types"
+      ],
+      "passes": false
+    },
+    {
+      "id": "auth-001",
+      "category": "auth",
+      "description": "Implement email/password sign up flow",
+      "steps": [
+        "Create sign up form with email, password, display_name fields",
+        "Call supabase.auth.signUp with user metadata",
+        "Handle success: redirect to dashboard",
+        "Handle error: display error message",
+        "Verify user appears in auth.users table"
+      ],
+      "passes": false
+    },
+    {
+      "id": "auth-002",
+      "category": "auth",
+      "description": "Implement email/password sign in flow",
+      "steps": [
+        "Create sign in form with email and password fields",
+        "Call supabase.auth.signInWithPassword",
+        "Handle success: redirect to dashboard",
+        "Handle error: display 'Invalid credentials' message",
+        "Verify session is stored correctly"
+      ],
+      "passes": false
+    },
+    {
+      "id": "auth-003",
+      "category": "auth",
+      "description": "Implement sign out functionality",
+      "steps": [
+        "Add sign out button to navbar",
+        "Call supabase.auth.signOut on click",
+        "Clear local state and redirect to home",
+        "Verify session is invalidated"
+      ],
+      "passes": false
+    },
+    {
+      "id": "auth-004",
+      "category": "auth",
+      "description": "Create useAuth hook for auth state management",
+      "steps": [
+        "Create hooks/useAuth.ts",
+        "Subscribe to auth state changes with onAuthStateChange",
+        "Expose user, session, loading state",
+        "Expose signIn, signUp, signOut methods",
+        "Clean up subscription on unmount"
+      ],
+      "passes": false
+    },
+    {
+      "id": "auth-005",
+      "category": "auth",
+      "description": "Create AuthGuard component for protected routes",
+      "steps": [
+        "Create components/layout/AuthGuard.tsx",
+        "Check auth state using useAuth hook",
+        "Show loading spinner while checking auth",
+        "Redirect to /login if not authenticated",
+        "Render children if authenticated"
+      ],
+      "passes": false
+    },
+    {
+      "id": "auth-006",
+      "category": "auth",
+      "description": "Auto-create profile on user sign up",
+      "steps": [
+        "Create database trigger or use Supabase function",
+        "On auth.users INSERT, create profiles row",
+        "Copy display_name from user metadata",
+        "Verify profile exists after sign up"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-001",
+      "category": "character",
+      "description": "Create new character with name and system selection",
+      "steps": [
+        "Create character creation form/modal",
+        "Add name input (required) and system dropdown",
+        "Insert into characters table with owner_id",
+        "Set default core_stats JSON",
+        "Redirect to character sheet on success"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-002",
+      "category": "character",
+      "description": "Display character list for current user",
+      "steps": [
+        "Create CharacterList component",
+        "Query characters where owner_id = current user",
+        "Display as cards with name, system, level",
+        "Show empty state when no characters",
+        "Link each card to character detail page"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-003",
+      "category": "character",
+      "description": "View character sheet with core stats display",
+      "steps": [
+        "Create CharacterSheet component",
+        "Fetch character by ID with useCharacter hook",
+        "Display name and system prominently",
+        "Show HP (current/max/temp), AC, level from core_stats",
+        "Handle loading and not found states"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-004",
+      "category": "character",
+      "description": "Edit HP with current/max/temp fields",
+      "steps": [
+        "Create HPTracker component with three inputs",
+        "Bind inputs to core_stats.hp object",
+        "Update on change with debounced save",
+        "Validate current <= max",
+        "Verify changes persist after refresh"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-005",
+      "category": "character",
+      "description": "Edit AC and level inline",
+      "steps": [
+        "Add editable fields for AC and level",
+        "Use number inputs with appropriate min values",
+        "Debounce saves (500ms)",
+        "Show visual feedback on save",
+        "Verify changes persist"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-006",
+      "category": "character",
+      "description": "Edit sheet_data via JSON tree editor",
+      "steps": [
+        "Create CharacterEditor component",
+        "Render sheet_data as expandable tree",
+        "Support editing string, number, boolean values",
+        "Support adding new keys to objects",
+        "Support adding items to arrays",
+        "Support deleting keys/items"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-007",
+      "category": "character",
+      "description": "Auto-save character changes with debounce",
+      "steps": [
+        "Implement useDebouncedCallback for saves",
+        "Trigger save 500ms after last change",
+        "Show saving indicator during save",
+        "Show saved confirmation briefly",
+        "Handle save errors gracefully"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-008",
+      "category": "character",
+      "description": "Delete character with confirmation",
+      "steps": [
+        "Add delete button to character sheet",
+        "Show confirmation dialog on click",
+        "Call supabase delete on confirm",
+        "Redirect to character list on success",
+        "Handle deletion errors"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-009",
+      "category": "character",
+      "description": "Assign character to a room",
+      "steps": [
+        "Add room selector dropdown to character sheet",
+        "List rooms user is a member of",
+        "Update character.room_id on selection",
+        "Allow unassigning (set to null)",
+        "Verify character appears in room's character list"
+      ],
+      "passes": false
+    },
+    {
+      "id": "char-010",
+      "category": "character",
+      "description": "Toggle character visibility (public/private)",
+      "steps": [
+        "Add is_public toggle to character sheet",
+        "Update database on toggle",
+        "Show indicator of current visibility state",
+        "Verify other room members can/cannot see based on setting"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-001",
+      "category": "dice",
+      "description": "Parse simple dice expressions (NdS)",
+      "steps": [
+        "Create dice parser in packages/shared/src/dice/parser.ts",
+        "Parse '1d20' -> {count: 1, sides: 20}",
+        "Parse '2d6' -> {count: 2, sides: 6}",
+        "Parse 'd20' (implicit 1) -> {count: 1, sides: 20}",
+        "Throw error on invalid expressions"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-002",
+      "category": "dice",
+      "description": "Parse dice expressions with modifiers (NdS+M)",
+      "steps": [
+        "Extend parser for + and - modifiers",
+        "Parse '1d20+5' -> {count: 1, sides: 20, modifier: 5}",
+        "Parse '2d6-2' -> {count: 2, sides: 6, modifier: -2}",
+        "Handle modifier: 0 as default"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-003",
+      "category": "dice",
+      "description": "Parse keep highest/lowest expressions (kh/kl)",
+      "steps": [
+        "Extend parser for keep notation",
+        "Parse '2d20kh1' -> keep: 'highest', keepCount: 1",
+        "Parse '2d20kl1' -> keep: 'lowest', keepCount: 1",
+        "Parse '4d6kh3' -> keep: 'highest', keepCount: 3"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-004",
+      "category": "dice",
+      "description": "Parse drop highest/lowest expressions (dh/dl)",
+      "steps": [
+        "Extend parser for drop notation",
+        "Parse '4d6dl1' -> drop: 'lowest', dropCount: 1",
+        "Parse '3d20dh1' -> drop: 'highest', dropCount: 1",
+        "Handle combined with modifiers: '4d6dl1+2'"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-005",
+      "category": "dice",
+      "description": "Execute dice rolls with crypto random",
+      "steps": [
+        "Create roller in packages/shared/src/dice/roller.ts",
+        "Use crypto.getRandomValues for randomness",
+        "Return array of individual die results",
+        "Ensure values are in valid range [1, sides]",
+        "Test distribution is reasonably uniform"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-006",
+      "category": "dice",
+      "description": "Calculate totals with keep/drop logic",
+      "steps": [
+        "Implement keep highest: sort desc, take first N",
+        "Implement keep lowest: sort asc, take first N",
+        "Implement drop highest: sort desc, remove first N",
+        "Implement drop lowest: sort asc, remove first N",
+        "Return kept rolls, dropped rolls, and total"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-007",
+      "category": "dice",
+      "description": "Create DiceInput component for expression entry",
+      "steps": [
+        "Create text input for dice expression",
+        "Add roll button",
+        "Validate expression on submit",
+        "Show validation error for invalid expressions",
+        "Clear input after successful roll (optional)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-008",
+      "category": "dice",
+      "description": "Create DiceResult component showing individual dice",
+      "steps": [
+        "Display dice expression and label",
+        "Show each individual die result",
+        "Visually distinguish kept vs dropped dice",
+        "Show modifier and final total",
+        "Display timestamp and roller name"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-009",
+      "category": "dice",
+      "description": "Create DicePresets for quick common rolls",
+      "steps": [
+        "Add preset buttons: d20, d12, d10, d8, d6, d4",
+        "Add advantage button (2d20kh1)",
+        "Add disadvantage button (2d20kl1)",
+        "Allow custom preset configuration (future)",
+        "Trigger roll on button click"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-010",
+      "category": "dice",
+      "description": "Save dice rolls to database",
+      "steps": [
+        "Insert roll into dice_rolls table",
+        "Include room_id, user_id, character_id (optional)",
+        "Store expression, label, individual_rolls, total",
+        "Store roll_metadata for advantage/disadvantage",
+        "Verify roll appears in database"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-011",
+      "category": "dice",
+      "description": "Display dice roll history in room",
+      "steps": [
+        "Create DiceHistory component",
+        "Query recent rolls for room (limit 50)",
+        "Order by created_at descending (newest first)",
+        "Display using DiceResult component",
+        "Show empty state when no rolls"
+      ],
+      "passes": false
+    },
+    {
+      "id": "dice-012",
+      "category": "dice",
+      "description": "Add roll labels for context",
+      "steps": [
+        "Add optional label input to DiceInput",
+        "Store label in dice_rolls.label column",
+        "Display label in DiceResult header",
+        "Common labels: Attack, Damage, Save, Check, etc."
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-001",
+      "category": "room",
+      "description": "Create new room with name",
+      "steps": [
+        "Create room creation form/modal",
+        "Add room name input (required)",
+        "Insert into rooms table with owner_id",
+        "Auto-add creator as room_member with 'owner' role",
+        "Redirect to room view on success"
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-002",
+      "category": "room",
+      "description": "Display room list for current user",
+      "steps": [
+        "Query rooms via room_members join",
+        "Display as cards with room name and member count",
+        "Show user's role in each room",
+        "Link each card to room view",
+        "Show empty state when no rooms"
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-003",
+      "category": "room",
+      "description": "Display and copy room invite code",
+      "steps": [
+        "Show invite code in room header",
+        "Add copy button next to code",
+        "Copy to clipboard on click",
+        "Show 'Copied!' feedback briefly",
+        "Only show to owner/DM roles"
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-004",
+      "category": "room",
+      "description": "Join room via invite code",
+      "steps": [
+        "Create /join/:inviteCode route",
+        "Create join room form for manual code entry",
+        "Query room by invite_code",
+        "Insert room_member with 'player' role",
+        "Handle already-member case gracefully",
+        "Redirect to room view on success"
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-005",
+      "category": "room",
+      "description": "Display member list in room sidebar",
+      "steps": [
+        "Create MemberList component",
+        "Query room_members with profile join",
+        "Display member name and role",
+        "Show role badge (Owner, DM, Player)",
+        "Sort by role hierarchy then name"
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-006",
+      "category": "room",
+      "description": "Leave room functionality",
+      "steps": [
+        "Add leave button for non-owner members",
+        "Show confirmation dialog",
+        "Delete room_member row on confirm",
+        "Redirect to room list",
+        "Prevent owner from leaving (must delete room)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-007",
+      "category": "room",
+      "description": "Delete room (owner only)",
+      "steps": [
+        "Add delete button visible only to owner",
+        "Show confirmation with room name",
+        "Delete room (cascades to members, rolls)",
+        "Redirect to room list",
+        "Handle deletion errors"
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-008",
+      "category": "room",
+      "description": "Display characters assigned to room",
+      "steps": [
+        "Query characters where room_id matches",
+        "Include both own and public characters",
+        "Display as compact cards",
+        "Show owner name for other players' characters",
+        "Link to character sheet view"
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-009",
+      "category": "room",
+      "description": "Change member role (owner/DM only)",
+      "steps": [
+        "Add role dropdown for each member",
+        "Only show to owner or DM",
+        "Update room_member.role on change",
+        "Prevent demoting self from owner",
+        "Show success feedback"
+      ],
+      "passes": false
+    },
+    {
+      "id": "room-010",
+      "category": "room",
+      "description": "Remove member from room (owner/DM only)",
+      "steps": [
+        "Add remove button for each member",
+        "Only show to owner or DM",
+        "Show confirmation dialog",
+        "Delete room_member row",
+        "Cannot remove owner"
+      ],
+      "passes": false
+    },
+    {
+      "id": "realtime-001",
+      "category": "realtime",
+      "description": "Subscribe to dice rolls in room",
+      "steps": [
+        "Create useDiceRolls hook with room subscription",
+        "Subscribe to postgres_changes INSERT on dice_rolls",
+        "Filter by room_id",
+        "Add new rolls to state on event",
+        "Clean up subscription on unmount"
+      ],
+      "passes": false
+    },
+    {
+      "id": "realtime-002",
+      "category": "realtime",
+      "description": "Real-time dice rolls appear for all room members",
+      "steps": [
+        "Open room in two browser tabs/users",
+        "Roll dice in one tab",
+        "Verify roll appears in other tab within 1 second",
+        "Verify individual dice results match",
+        "Test with multiple simultaneous rolls"
+      ],
+      "passes": false
+    },
+    {
+      "id": "realtime-003",
+      "category": "realtime",
+      "description": "Subscribe to character updates in room",
+      "steps": [
+        "Subscribe to postgres_changes UPDATE on characters",
+        "Filter by room_id",
+        "Update character in state on event",
+        "Handle character leaving room (room_id = null)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "realtime-004",
+      "category": "realtime",
+      "description": "Real-time HP changes visible to room members",
+      "steps": [
+        "Open room with public character in two tabs",
+        "Edit HP in character owner's tab",
+        "Verify HP updates in other tab within 1 second",
+        "Test with multiple rapid changes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "realtime-005",
+      "category": "realtime",
+      "description": "Implement presence tracking for online status",
+      "steps": [
+        "Create Supabase presence channel for room",
+        "Track user presence on channel subscribe",
+        "Listen for presence sync events",
+        "Build online users Set from presence state",
+        "Clean up presence on unmount/disconnect"
+      ],
+      "passes": false
+    },
+    {
+      "id": "realtime-006",
+      "category": "realtime",
+      "description": "Display online/offline indicators for members",
+      "steps": [
+        "Add green dot for online members",
+        "Add grey dot for offline members",
+        "Update indicators when presence changes",
+        "Show 'Online' / 'Offline' text on hover",
+        "Test with user joining/leaving room"
+      ],
+      "passes": false
+    },
+    {
+      "id": "realtime-007",
+      "category": "realtime",
+      "description": "Handle realtime connection errors gracefully",
+      "steps": [
+        "Detect channel subscription errors",
+        "Show reconnecting indicator",
+        "Attempt automatic reconnection",
+        "Show error toast after multiple failures",
+        "Allow manual reconnect action"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-001",
+      "category": "ui",
+      "description": "Create Button component with variants",
+      "steps": [
+        "Create components/ui/Button.tsx",
+        "Support variants: primary, secondary, danger, ghost",
+        "Support sizes: sm, md, lg",
+        "Support disabled state",
+        "Support loading state with spinner"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-002",
+      "category": "ui",
+      "description": "Create Input component with validation",
+      "steps": [
+        "Create components/ui/Input.tsx",
+        "Support label and placeholder",
+        "Support error state with message",
+        "Support disabled state",
+        "Support different types: text, email, password, number"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-003",
+      "category": "ui",
+      "description": "Create Card component for content containers",
+      "steps": [
+        "Create components/ui/Card.tsx",
+        "Support header, body, footer sections",
+        "Support hover state for clickable cards",
+        "Apply consistent padding and rounded corners"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-004",
+      "category": "ui",
+      "description": "Create Modal component for dialogs",
+      "steps": [
+        "Create components/ui/Modal.tsx",
+        "Support controlled open/close state",
+        "Add backdrop click to close",
+        "Add escape key to close",
+        "Support title and content slots",
+        "Trap focus within modal when open"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-005",
+      "category": "ui",
+      "description": "Create Toast notification system",
+      "steps": [
+        "Create components/ui/Toast.tsx",
+        "Support types: success, error, info, warning",
+        "Auto-dismiss after configurable duration",
+        "Support manual dismiss",
+        "Stack multiple toasts",
+        "Create useToast hook for triggering"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-006",
+      "category": "ui",
+      "description": "Create AppLayout with navigation",
+      "steps": [
+        "Create components/layout/AppLayout.tsx",
+        "Add top navbar with logo and user menu",
+        "Add responsive sidebar for navigation",
+        "Include main content area",
+        "Apply consistent spacing and colors"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-007",
+      "category": "ui",
+      "description": "Create Navbar with user menu",
+      "steps": [
+        "Display app logo/name",
+        "Show user display name when authenticated",
+        "Add dropdown with profile link and sign out",
+        "Show sign in button when not authenticated"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-008",
+      "category": "ui",
+      "description": "Create LoadingSpinner component",
+      "steps": [
+        "Create animated spinner SVG or CSS",
+        "Support size variants",
+        "Support color variants",
+        "Create full-page loading overlay variant"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-009",
+      "category": "ui",
+      "description": "Create ErrorBoundary for error handling",
+      "steps": [
+        "Create components/ui/ErrorBoundary.tsx",
+        "Catch errors in child component tree",
+        "Display fallback error UI",
+        "Provide retry/refresh action",
+        "Log errors for debugging"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ui-010",
+      "category": "ui",
+      "description": "Implement responsive mobile layout",
+      "steps": [
+        "Test all pages at mobile breakpoints",
+        "Collapse sidebar to hamburger menu on mobile",
+        "Stack room panels vertically on mobile",
+        "Ensure touch targets are 44px minimum",
+        "Test dice rolling on touch devices"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-001",
+      "category": "testing",
+      "description": "Set up Vitest for unit testing",
+      "steps": [
+        "Install vitest and @testing-library/react",
+        "Create vitest.config.ts",
+        "Create test setup file with mocks",
+        "Add test script to package.json",
+        "Verify test runner works with sample test"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-002",
+      "category": "testing",
+      "description": "Unit tests for dice parser",
+      "steps": [
+        "Test simple expressions (1d20, 2d6)",
+        "Test expressions with modifiers (1d20+5, 2d6-2)",
+        "Test keep expressions (2d20kh1, 4d6kh3)",
+        "Test drop expressions (4d6dl1)",
+        "Test invalid expression errors"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-003",
+      "category": "testing",
+      "description": "Unit tests for dice roller",
+      "steps": [
+        "Test roll results are in valid range",
+        "Test correct number of dice rolled",
+        "Test keep highest logic",
+        "Test keep lowest logic",
+        "Test drop lowest logic",
+        "Test modifier is applied correctly"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-004",
+      "category": "testing",
+      "description": "Integration tests for character CRUD",
+      "steps": [
+        "Mock Supabase client",
+        "Test character creation",
+        "Test character reading",
+        "Test character update (core_stats)",
+        "Test character deletion"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-005",
+      "category": "testing",
+      "description": "Integration tests for useAuth hook",
+      "steps": [
+        "Mock Supabase auth",
+        "Test initial loading state",
+        "Test authenticated state after sign in",
+        "Test unauthenticated state after sign out",
+        "Test auth state change subscription"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-006",
+      "category": "testing",
+      "description": "Set up Playwright for E2E testing",
+      "steps": [
+        "Install @playwright/test",
+        "Create playwright.config.ts",
+        "Configure base URL and browsers",
+        "Add e2e script to package.json",
+        "Create test fixtures for auth"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-007",
+      "category": "testing",
+      "description": "E2E test: User sign up and sign in flow",
+      "steps": [
+        "Navigate to sign up page",
+        "Fill form and submit",
+        "Verify redirect to dashboard",
+        "Sign out and sign back in",
+        "Verify session persists on refresh"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-008",
+      "category": "testing",
+      "description": "E2E test: Create and edit character",
+      "steps": [
+        "Sign in as test user",
+        "Create new character with name",
+        "Edit HP values",
+        "Add custom field to sheet_data",
+        "Verify changes persist after refresh"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-009",
+      "category": "testing",
+      "description": "E2E test: Room creation and joining",
+      "steps": [
+        "Sign in as user A, create room",
+        "Copy invite code",
+        "Sign in as user B in new context",
+        "Join room via invite code",
+        "Verify both users see each other in member list"
+      ],
+      "passes": false
+    },
+    {
+      "id": "test-010",
+      "category": "testing",
+      "description": "E2E test: Dice rolling in room",
+      "steps": [
+        "Join room as two users",
+        "Roll dice as user A",
+        "Verify roll appears for user B",
+        "Roll with advantage (2d20kh1)",
+        "Verify individual dice shown correctly"
+      ],
+      "passes": false
+    }
+  ]
+}
