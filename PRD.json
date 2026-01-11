@@ -785,7 +785,7 @@
         "Support disabled state",
         "Support different types: text, email, password, number"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-003",
