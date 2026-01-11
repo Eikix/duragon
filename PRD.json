@@ -462,7 +462,7 @@
         "Implement drop lowest: sort asc, remove first N",
         "Return kept rolls, dropped rolls, and total"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "dice-007",
