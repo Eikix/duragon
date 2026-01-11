@@ -29,7 +29,7 @@
         "Create tsconfig.json extending base config",
         "Run npm run dev and verify app loads at localhost"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "setup-003",

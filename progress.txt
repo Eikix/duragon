@@ -16,3 +16,5 @@
 # ============================================================================
 
 [2026-01-11 17:36] setup-001: Initialized npm monorepo with workspace configuration. Created root package.json with npm workspaces for apps/* and packages/*. Added .gitignore. Created apps/ and packages/ directories. Changed from pnpm to npm per user request.
+
+[2026-01-11 18:15] setup-002: Configured Vite React application with TypeScript. Created apps/web using Vite react-ts template. Added path alias (@/) to vite.config.ts and tsconfig.app.json. Configured server port 5173. Verified build and dev server work correctly.
