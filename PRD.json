@@ -449,7 +449,7 @@
         "Ensure values are in valid range [1, sides]",
         "Test distribution is reasonably uniform"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "dice-006",
