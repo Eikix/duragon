@@ -92,7 +92,7 @@
         "Create policy: users can only update own profile",
         "Run migration and verify table exists"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "db-002",
