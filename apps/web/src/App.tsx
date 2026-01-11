@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { SHARED_VERSION, type RollResult } from '@duragon/shared';
-import { DiceInput } from './components/dice';
+import { DiceInput, DiceResult } from './components/dice';
+
+interface RollEntry {
+  result: RollResult;
+  timestamp: Date;
+}
 
 function App() {
-  const [lastRoll, setLastRoll] = useState<RollResult | null>(null);
+  const [rolls, setRolls] = useState<RollEntry[]>([]);
 
   const handleRoll = (result: RollResult) => {
-    setLastRoll(result);
+    setRolls((prev) => [{ result, timestamp: new Date() }, ...prev].slice(0, 10));
   };
 
   return (
@@ -21,36 +26,16 @@ function App() {
           <h2 className="text-xl font-semibold mb-4">Dice Roller</h2>
           <DiceInput onRoll={handleRoll} />
 
-          {lastRoll && (
-            <div className="mt-4 p-4 bg-gray-700 rounded-md">
-              <div className="text-sm text-gray-400 mb-1">
-                {lastRoll.dice.count}d{lastRoll.dice.sides}
-                {lastRoll.dice.keep && `k${lastRoll.dice.keep === 'highest' ? 'h' : 'l'}${lastRoll.dice.keepCount}`}
-                {lastRoll.dice.drop && `d${lastRoll.dice.drop === 'highest' ? 'h' : 'l'}${lastRoll.dice.dropCount}`}
-                {lastRoll.modifier !== 0 && (lastRoll.modifier > 0 ? `+${lastRoll.modifier}` : lastRoll.modifier)}
-              </div>
-              <div className="flex items-center gap-2 mb-2">
-                {lastRoll.rolls.map((die, index) => (
-                  <span
-                    key={index}
-                    className={`inline-flex items-center justify-center w-8 h-8 rounded text-sm font-mono ${
-                      die.kept
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-600 text-gray-400 line-through'
-                    }`}
-                  >
-                    {die.value}
-                  </span>
-                ))}
-                {lastRoll.modifier !== 0 && (
-                  <span className="text-gray-300">
-                    {lastRoll.modifier > 0 ? '+' : ''}{lastRoll.modifier}
-                  </span>
-                )}
-              </div>
-              <div className="text-2xl font-bold text-green-400">
-                Total: {lastRoll.total}
-              </div>
+          {rolls.length > 0 && (
+            <div className="mt-4 space-y-3">
+              {rolls.map((entry, index) => (
+                <DiceResult
+                  key={`${entry.timestamp.getTime()}-${index}`}
+                  result={entry.result}
+                  timestamp={entry.timestamp}
+                  rollerName="You"
+                />
+              ))}
             </div>
           )}
         </div>

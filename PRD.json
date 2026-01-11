@@ -488,7 +488,7 @@
         "Show modifier and final total",
         "Display timestamp and roller name"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "dice-009",
