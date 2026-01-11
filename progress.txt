@@ -15,3 +15,4 @@
 # PROGRESS LOG START
 # ============================================================================
 
+[2026-01-11 17:36] setup-001: Initialized npm monorepo with workspace configuration. Created root package.json with npm workspaces for apps/* and packages/*. Added .gitignore. Created apps/ and packages/ directories. Changed from pnpm to npm per user request.
