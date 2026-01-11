@@ -875,7 +875,7 @@
         "Provide retry/refresh action",
         "Log errors for debugging"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-010",

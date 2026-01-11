@@ -15,3 +15,6 @@ export type { ToastType, ToastOptions, ToastProviderProps, UseToastReturn } from
 
 export { LoadingSpinner, LoadingOverlay } from './LoadingSpinner';
 export type { LoadingSpinnerProps, SpinnerSize, SpinnerColor, LoadingOverlayProps } from './LoadingSpinner';
+
+export { ErrorBoundary } from './ErrorBoundary';
+export type { ErrorBoundaryProps } from './ErrorBoundary';
