@@ -838,7 +838,7 @@
         "Include main content area",
         "Apply consistent spacing and colors"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-007",
