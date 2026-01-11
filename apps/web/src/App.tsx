@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { SHARED_VERSION, type RollResult } from '@duragon/shared';
-import { DiceInput, DiceResult } from './components/dice';
+import { DiceInput, DiceResult, DicePresets } from './components/dice';
 
 interface RollEntry {
   result: RollResult;
@@ -25,6 +25,9 @@ function App() {
         <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Dice Roller</h2>
           <DiceInput onRoll={handleRoll} />
+          <div className="mt-3">
+            <DicePresets onRoll={handleRoll} />
+          </div>
 
           {rolls.length > 0 && (
             <div className="mt-4 space-y-3">

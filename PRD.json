@@ -501,7 +501,7 @@
         "Allow custom preset configuration (future)",
         "Trigger roll on button click"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "dice-010",
