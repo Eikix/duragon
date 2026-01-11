@@ -9,3 +9,6 @@ export type { CardProps } from './Card';
 
 export { Modal } from './Modal';
 export type { ModalProps } from './Modal';
+
+export { ToastProvider, useToast } from './Toast';
+export type { ToastType, ToastOptions, ToastProviderProps, UseToastReturn } from './Toast';

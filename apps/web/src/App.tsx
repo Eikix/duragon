@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { SHARED_VERSION, type RollResult } from '@duragon/shared';
 import { DiceInput, DiceResult, DicePresets } from './components/dice';
+import { Button, useToast } from './components/ui';
 
 interface RollEntry {
   result: RollResult;
@@ -9,6 +10,7 @@ interface RollEntry {
 
 function App() {
   const [rolls, setRolls] = useState<RollEntry[]>([]);
+  const { success, error, info, warning } = useToast();
 
   const handleRoll = (result: RollResult) => {
     setRolls((prev) => [{ result, timestamp: new Date() }, ...prev].slice(0, 10));
@@ -21,6 +23,24 @@ function App() {
         <p className="text-gray-400 text-sm mb-8">
           D&D Companion v{SHARED_VERSION}
         </p>
+
+        <div className="bg-gray-800 rounded-lg p-6 shadow-lg mb-6">
+          <h2 className="text-xl font-semibold mb-4">Toast Demo</h2>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" onClick={() => success('Action completed!')}>
+              Success
+            </Button>
+            <Button size="sm" variant="danger" onClick={() => error('Something went wrong')}>
+              Error
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => info('Here is some info')}>
+              Info
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => warning('Be careful!')}>
+              Warning
+            </Button>
+          </div>
+        </div>
 
         <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Dice Roller</h2>

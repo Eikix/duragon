@@ -825,7 +825,7 @@
         "Stack multiple toasts",
         "Create useToast hook for triggering"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-006",
