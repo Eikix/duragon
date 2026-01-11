@@ -42,7 +42,7 @@
         "Add Tailwind directives to index.css",
         "Verify Tailwind classes render correctly in browser"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "setup-004",
@@ -54,7 +54,7 @@
         "Create src/lib/supabase.ts with typed client",
         "Verify client initializes without errors"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "setup-005",
@@ -66,7 +66,7 @@
         "Configure tsconfig.json for the package",
         "Verify package can be imported from apps/web"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "setup-006",
@@ -400,7 +400,7 @@
         "Parse 'd20' (implicit 1) -> {count: 1, sides: 20}",
         "Throw error on invalid expressions"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "dice-002",
