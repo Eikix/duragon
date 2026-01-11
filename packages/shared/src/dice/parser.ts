@@ -1,6 +1,7 @@
 /**
  * Dice expression parser
  * Parses dice notation like "1d20", "2d6", "d20" (implicit 1)
+ * Supports modifiers: "1d20+5", "2d6-2"
  */
 
 /**
@@ -11,6 +12,8 @@ export interface ParsedDice {
   count: number;
   /** Number of sides on each die */
   sides: number;
+  /** Modifier to add to the total (default: 0) */
+  modifier: number;
 }
 
 /**
@@ -27,24 +30,27 @@ export class DiceParseError extends Error {
 }
 
 /**
- * Regular expression for parsing simple dice notation: NdS or dS
+ * Regular expression for parsing dice notation: NdS or dS with optional modifier
  * - N: optional count (defaults to 1 if omitted)
  * - d: literal 'd' separator (case insensitive)
  * - S: number of sides (required)
+ * - +/-M: optional modifier (e.g., +5, -2)
  */
-const SIMPLE_DICE_REGEX = /^(\d*)d(\d+)$/i;
+const DICE_REGEX = /^(\d*)d(\d+)([+-]\d+)?$/i;
 
 /**
- * Parses a simple dice expression in NdS format
+ * Parses a dice expression in NdS format with optional modifier
  *
- * @param expression - The dice expression to parse (e.g., "1d20", "2d6", "d20")
- * @returns The parsed dice with count and sides
+ * @param expression - The dice expression to parse (e.g., "1d20", "2d6+3", "d20-1")
+ * @returns The parsed dice with count, sides, and modifier
  * @throws {DiceParseError} If the expression is invalid
  *
  * @example
- * parseDice("1d20") // { count: 1, sides: 20 }
- * parseDice("2d6")  // { count: 2, sides: 6 }
- * parseDice("d20")  // { count: 1, sides: 20 }
+ * parseDice("1d20")   // { count: 1, sides: 20, modifier: 0 }
+ * parseDice("2d6")    // { count: 2, sides: 6, modifier: 0 }
+ * parseDice("d20")    // { count: 1, sides: 20, modifier: 0 }
+ * parseDice("1d20+5") // { count: 1, sides: 20, modifier: 5 }
+ * parseDice("2d6-2")  // { count: 2, sides: 6, modifier: -2 }
  */
 export function parseDice(expression: string): ParsedDice {
   if (!expression || typeof expression !== 'string') {
@@ -58,21 +64,24 @@ export function parseDice(expression: string): ParsedDice {
     throw new DiceParseError('Expression cannot be empty', expression);
   }
 
-  const match = trimmed.match(SIMPLE_DICE_REGEX);
+  const match = trimmed.match(DICE_REGEX);
 
   if (!match) {
     throw new DiceParseError(
-      `Invalid dice expression: "${trimmed}". Expected format: NdS (e.g., 1d20, 2d6, d20)`,
+      `Invalid dice expression: "${trimmed}". Expected format: NdS or NdS+M (e.g., 1d20, 2d6+3, d20-1)`,
       expression
     );
   }
 
   const countStr = match[1] ?? '';
   const sidesStr = match[2] ?? '';
+  const modifierStr = match[3] ?? '';
 
   // Default count to 1 if not specified (e.g., "d20" -> 1d20)
   const count = countStr === '' ? 1 : parseInt(countStr, 10);
   const sides = parseInt(sidesStr, 10);
+  // Default modifier to 0 if not specified
+  const modifier = modifierStr === '' ? 0 : parseInt(modifierStr, 10);
 
   // Validate count
   if (count < 1) {
@@ -104,5 +113,5 @@ export function parseDice(expression: string): ParsedDice {
     );
   }
 
-  return { count, sides };
+  return { count, sides, modifier };
 }

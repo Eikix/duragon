@@ -412,7 +412,7 @@
         "Parse '2d6-2' -> {count: 2, sides: 6, modifier: -2}",
         "Handle modifier: 0 as default"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "dice-003",
