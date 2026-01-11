@@ -850,7 +850,7 @@
         "Add dropdown with profile link and sign out",
         "Show sign in button when not authenticated"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-008",
