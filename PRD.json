@@ -78,7 +78,7 @@
         "Verify supabase start runs successfully",
         "Confirm local Supabase Studio accessible"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "db-001",
