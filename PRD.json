@@ -436,7 +436,7 @@
         "Parse '3d20dh1' -> drop: 'highest', dropCount: 1",
         "Handle combined with modifiers: '4d6dl1+2'"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "dice-005",
