@@ -12,3 +12,6 @@ export type { ModalProps } from './Modal';
 
 export { ToastProvider, useToast } from './Toast';
 export type { ToastType, ToastOptions, ToastProviderProps, UseToastReturn } from './Toast';
+
+export { LoadingSpinner, LoadingOverlay } from './LoadingSpinner';
+export type { LoadingSpinnerProps, SpinnerSize, SpinnerColor, LoadingOverlayProps } from './LoadingSpinner';

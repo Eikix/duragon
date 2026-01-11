@@ -862,7 +862,7 @@
         "Support color variants",
         "Create full-page loading overlay variant"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-009",
