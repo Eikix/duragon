@@ -772,7 +772,7 @@
         "Support disabled state",
         "Support loading state with spinner"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ui-002",
