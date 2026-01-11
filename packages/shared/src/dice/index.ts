@@ -4,4 +4,4 @@
 
 // Parser
 export { parseDice, DiceParseError } from './parser';
-export type { ParsedDice } from './parser';
+export type { ParsedDice, KeepMode } from './parser';
